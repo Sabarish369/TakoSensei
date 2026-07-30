@@ -68,7 +68,7 @@ type Report = {
 };
 
 type SessionData = {
-  id: number;
+  id: string;
   topic: string;
   status: string;
 };
@@ -162,7 +162,7 @@ export default function ReportPage({
           setLoading(false);
           return;
         }
-        setSession({ id: 0, topic: s.topic, status: s.status } as any);
+        setSession({ id: s.id, topic: s.topic, status: s.status });
 
         // Cached report? Show it immediately — no regeneration cost.
         if (s.report) {
@@ -788,46 +788,50 @@ function ReportView({
         <Divider />
 
         {/* ── Tako's Final Understanding ── */}
-        <section
-          id="understanding"
-          className="reveal scroll-mt-24 text-center"
-        >
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-300">
-            Tako&apos;s Final Understanding
-          </p>
-          <blockquote className="mt-5 rounded-[28px] bg-neutral-50 border border-neutral-100 px-8 py-7 text-[16px] leading-[1.7] text-neutral-700 font-normal tracking-tight">
-            <span className="text-violet-300 text-3xl leading-none">
-              &ldquo;
-            </span>
-            {report.takoSummary}
-            <span className="text-violet-300 text-3xl leading-none">
-              &rdquo;
-            </span>
-          </blockquote>
-          <div className="mt-5 flex items-center justify-center gap-2.5">
-            <Tako size={28} />
-            <span className="text-[11px] font-medium text-neutral-300">
-              Tako
-            </span>
-          </div>
-        </section>
+        {report.takoSummary && (
+          <section
+            id="understanding"
+            className="reveal scroll-mt-24 text-center"
+          >
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-300">
+              Tako&apos;s Final Understanding
+            </p>
+            <blockquote className="mt-5 rounded-[28px] bg-neutral-50 border border-neutral-100 px-8 py-7 text-[16px] leading-[1.7] text-neutral-700 font-normal tracking-tight">
+              <span className="text-violet-300 text-3xl leading-none">
+                &ldquo;
+              </span>
+              {report.takoSummary}
+              <span className="text-violet-300 text-3xl leading-none">
+                &rdquo;
+              </span>
+            </blockquote>
+            <div className="mt-5 flex items-center justify-center gap-2.5">
+              <Tako size={28} />
+              <span className="text-[11px] font-medium text-neutral-300">
+                Tako
+              </span>
+            </div>
+          </section>
+        )}
 
         <Divider />
 
         {/* ── Clearest Explanation ── */}
-        <section id="explanation" className="reveal scroll-mt-24">
-          <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-300 mb-5">
-            Your Clearest Explanation
-          </h2>
-          <div className="rounded-[20px] border border-neutral-100 bg-white/60 px-7 py-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
-            <blockquote className="text-[15.5px] leading-[1.7] text-neutral-800 font-normal">
-              &ldquo;{report.bestExplanation}&rdquo;
-            </blockquote>
-            <p className="mt-3 text-[11px] text-neutral-300">
-              Keep this phrasing for next time.
-            </p>
-          </div>
-        </section>
+        {report.bestExplanation && (
+          <section id="explanation" className="reveal scroll-mt-24">
+            <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-300 mb-5">
+              Your Clearest Explanation
+            </h2>
+            <div className="rounded-[20px] border border-neutral-100 bg-white/60 px-7 py-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+              <blockquote className="text-[15.5px] leading-[1.7] text-neutral-800 font-normal">
+                &ldquo;{report.bestExplanation}&rdquo;
+              </blockquote>
+              <p className="mt-3 text-[11px] text-neutral-300">
+                Keep this phrasing for next time.
+              </p>
+            </div>
+          </section>
+        )}
 
         <Divider />
 
@@ -836,16 +840,18 @@ function ReportView({
           <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-300 mb-5">
             Next Step
           </h2>
-          <ul className="space-y-2.5 mb-8">
-            {report.nextSteps.map((s, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-violet-400" />
-                <span className="text-[14.5px] leading-[1.5] text-neutral-600 font-normal">
-                  {s}
-                </span>
-              </li>
-            ))}
-          </ul>
+          {report.nextSteps && report.nextSteps.length > 0 && (
+            <ul className="space-y-2.5 mb-8">
+              {report.nextSteps.map((s, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-violet-400" />
+                  <span className="text-[14.5px] leading-[1.5] text-neutral-600 font-normal">
+                    {s}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="flex gap-3 sm:gap-4">
             <Link
               href={`/teach/${session.id}`}
