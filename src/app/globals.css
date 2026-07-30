@@ -1,0 +1,659 @@
+@import "tailwindcss";
+
+:root {
+  --font-inter: "Inter", system-ui, sans-serif;
+}
+
+html {
+  font-family: var(--font-inter);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Subtle custom scrollbar for the dark theme */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #26262a;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #38383d;
+  background-clip: content-box;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.animate-bob {
+  animation: bob 4s ease-in-out infinite;
+}
+
+@keyframes dot {
+  0%, 80%, 100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+.tako-dot {
+  animation: dot 1.2s infinite ease-in-out;
+}
+
+.tako-glow {
+  background: radial-gradient(
+    800px circle at 50% -100px,
+    rgba(124, 58, 237, 0.1),
+    transparent 60%
+  );
+}
+
+/* Illustrated mascot art. The PNG has a transparent background, so it sits
+   cleanly on any surface in both light and dark mode — no chip or plate. */
+.tako-img {
+  display: block;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/* Apple-style spring / micro-interactions                            */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Floating label / lift effect for cards that get focus. */
+.ios-lift {
+  transition: transform 280ms var(--spring),
+              box-shadow 280ms var(--spring),
+              border-color 200ms var(--ease),
+              background-color 200ms var(--ease);
+}
+.ios-lift:focus-within {
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 10px 30px -10px rgba(17, 24, 39, 0.10);
+}
+
+/* Apple-like input box — position animates as part of the pop */
+.apple-input {
+  transition:
+    transform 620ms var(--spring-bubble),
+    box-shadow 460ms var(--spring),
+    border-color 240ms var(--ease),
+    background-color 240ms var(--ease);
+}
+.apple-input.is-centered {
+  transform: translateY(-6px);
+}
+
+:root {
+  --spring-bubble: cubic-bezier(0.32, 0.92, 0.34, 1);
+}
+
+.apple-input:focus-within {
+  transform: translateY(-2px);
+}
+
+.apple-input:focus-within,
+.apple-input:hover {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 18px 50px -14px rgba(17, 24, 39, 0.14);
+}
+
+.apple-input textarea {
+  caret-color: #7C3AED;
+}
+
+/* macOS-style bubble pop on expand — subtle overshoot, never layout-jarring */
+.apple-bubble {
+  transform-origin: 50% 0%;
+  animation: bubbleOut 640ms var(--spring-bubble) both;
+}
+
+@keyframes bubbleOut {
+  0% {
+    transform: scale(0.985) translateY(4px);
+    filter: blur(3px);
+    opacity: 0.85;
+  }
+  55% {
+    transform: scale(1.007) translateY(-1px);
+    filter: blur(0px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+
+/* Real content blur — applied directly to page chrome when the input
+   pops up, so the whole screen visibly frosts in sync with the bubble. */
+.chrome-blur {
+  transition:
+    filter 620ms var(--ease),
+    opacity 620ms var(--ease),
+    transform 620ms var(--spring-bubble);
+  will-change: filter, opacity;
+}
+.chrome-blur.is-blurred {
+  filter: blur(14px) saturate(130%);
+  opacity: 0.78; /* slightly more transparent so background is still visible */
+  pointer-events: none;
+}
+
+/* Softer, quicker blur for elements close to the card */
+.chrome-blur-near {
+  transition:
+    filter 560ms var(--ease),
+    opacity 560ms var(--ease),
+    transform 560ms var(--spring-bubble);
+  will-change: filter, opacity;
+}
+.chrome-blur-near.is-blurred {
+  filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Content inside the editor softens in with a tiny blur — Apple panel reveal */
+.apple-panel-content {
+  animation: panelIn 560ms var(--spring) 120ms both;
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* Button press feedback (Apple's "tap") */
+.btn-primary {
+  transition:
+    transform 180ms var(--spring),
+    background-color 180ms var(--ease),
+    opacity 180ms var(--ease);
+}
+.btn-primary:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+/* Send button states (idle → sending → sent morph) */
+.send-btn {
+  position: relative;
+  overflow: hidden;
+  transition:
+    width 320ms var(--spring),
+    background-color 200ms var(--ease),
+    transform 180ms var(--spring),
+    color 200ms var(--ease);
+}
+.send-btn:not(:disabled):active {
+  transform: scale(0.94);
+}
+
+/* The check mark that slides in briefly after "Teach Tako" */
+.send-check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(120%);
+  opacity: 0;
+  transition:
+    transform 320ms var(--spring),
+    opacity 220ms var(--ease);
+}
+.send-btn.is-sent .send-check {
+  transform: translateY(0);
+  opacity: 1;
+}
+.send-label {
+  transition:
+    transform 320ms var(--spring),
+    opacity 220ms var(--ease);
+}
+.send-btn.is-sent .send-label {
+  transform: translateY(-120%);
+  opacity: 0;
+}
+
+/* Smooth concept chip unlock animation */
+.chip {
+  transition:
+    transform 360ms var(--spring),
+    background-color 240ms var(--ease),
+    border-color 240ms var(--ease),
+    color 240ms var(--ease),
+    box-shadow 300ms var(--ease);
+}
+.chip.locked {
+  transform: scale(0.98);
+}
+.chip.unlocked {
+  transform: scale(1);
+  animation: chipReveal 580ms var(--spring) both;
+}
+@keyframes chipReveal {
+  0%   { transform: scale(0.75) rotate(-4deg); opacity: 0.3; filter: blur(4px); }
+  50%  { transform: scale(1.08) rotate(1deg); opacity: 1; filter: blur(0px); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
+}
+
+/* Subtle locked pulse to hint there's something behind it */
+.chip.locked {
+  transform: scale(0.98);
+}
+.chip.locked:hover {
+  transform: scale(1);
+  animation: lockHint 1.2s var(--spring) infinite;
+}
+@keyframes lockHint {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+  50%      { box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.08); }
+}
+
+/* Subtle shimmer over Tako's card while thinking */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(124, 58, 237, 0.08) 45%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer 1.6s infinite;
+}
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* Fade/slide in for a new Tako question */
+.tako-question {
+  animation: takoIn 520ms var(--spring) both;
+}
+@keyframes takoIn {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.995); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Progress bar smooth */
+.progress-fill {
+  transition: width 900ms var(--spring);
+}
+
+/* Fade up with slight delay for children */
+.stagger > * {
+  animation: fadeUp 420ms var(--spring) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 60ms; }
+.stagger > *:nth-child(2) { animation-delay: 130ms; }
+.stagger > *:nth-child(3) { animation-delay: 200ms; }
+.stagger > *:nth-child(4) { animation-delay: 270ms; }
+.stagger > *:nth-child(5) { animation-delay: 340ms; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Thinking dots (Apple Messages style) */
+.tako-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 18px;
+}
+.tako-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #a3a3a3;
+  animation: dot 1.2s infinite ease-in-out;
+}
+.tako-dots span:nth-child(2) { animation-delay: 0.18s; }
+.tako-dots span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes dot {
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40%           { opacity: 1;   transform: translateY(-3px); }
+}
+
+/* Minimal input caret highlight on focus */
+textarea {
+  caret-color: #7C3AED;
+}
+
+/* ------------------------------------------------------------------ */
+/* Global light / dark appearance                                     */
+/* ------------------------------------------------------------------ */
+
+html {
+  color-scheme: light;
+  background: #fafaf9;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  background: #0b0b0c;
+}
+
+body,
+main,
+header,
+section,
+input,
+textarea,
+button,
+a,
+[class*="bg-"],
+[class*="border-"],
+[class*="text-"] {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 260ms;
+  transition-timing-function: var(--ease);
+}
+
+/* Minimal circular theme toggle that morphs between sun and moon */
+.theme-morph {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+  color: #525252;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 10px 28px rgba(0, 0, 0, 0.1);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  opacity: 0;
+  transform: translateY(10px) scale(0.92);
+  transition:
+    opacity 260ms var(--ease),
+    transform 320ms var(--spring),
+    background-color 220ms var(--ease),
+    border-color 220ms var(--ease),
+    color 220ms var(--ease),
+    box-shadow 220ms var(--ease);
+}
+.theme-morph.is-ready {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.theme-morph:hover {
+  transform: scale(1.06);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.06),
+    0 14px 36px rgba(0, 0, 0, 0.12);
+}
+.theme-morph:active {
+  transform: scale(0.94);
+  transition-duration: 120ms;
+}
+.theme-morph:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 4px;
+}
+
+.theme-morph-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+}
+
+/* Sun and Moon icons with rotation morph */
+.theme-morph-sun,
+.theme-morph-moon {
+  position: absolute;
+  transition: opacity 280ms var(--ease), transform 400ms var(--spring);
+}
+
+/* Default (light): show sun, hide moon rotated */
+.theme-morph-sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+.theme-morph-moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+/* Dark mode: show moon, hide sun rotated */
+html[data-theme="dark"] .theme-morph,
+.theme-morph-inner[data-state="moon"] ~ .theme-morph,
+.theme-morph:has(.theme-morph-inner[data-state="moon"]) {
+  color: #d4d4d8;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(28, 28, 30, 0.85);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.theme-morph-inner[data-state="moon"] .theme-morph-sun,
+html[data-theme="dark"] .theme-morph-sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+.theme-morph-inner[data-state="moon"] .theme-morph-moon,
+html[data-theme="dark"] .theme-morph-moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Dark theme: neutral app surfaces. Attribute selectors allow every current
+   page—including empty/loading states—to inherit the theme consistently. */
+html[data-theme="dark"] body,
+html[data-theme="dark"] main,
+html[data-theme="dark"] [class*="bg-[#FAFAF9]"] {
+  background-color: #0b0b0c !important;
+  color: #f5f5f5;
+}
+
+html[data-theme="dark"] [class*="bg-white"] {
+  background-color: rgba(24, 24, 27, 0.94) !important;
+}
+html[data-theme="dark"] [class~="bg-neutral-50"],
+html[data-theme="dark"] [class*="bg-neutral-50/"] {
+  background-color: rgba(38, 38, 42, 0.72) !important;
+}
+html[data-theme="dark"] [class~="bg-neutral-100"] {
+  background-color: #27272a !important;
+}
+html[data-theme="dark"] [class~="bg-neutral-200"] {
+  background-color: #3f3f46 !important;
+}
+
+html[data-theme="dark"] [class~="text-neutral-900"],
+html[data-theme="dark"] [class~="text-neutral-800"],
+html[data-theme="dark"] [class~="text-neutral-700"] {
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] [class~="text-neutral-600"],
+html[data-theme="dark"] [class~="text-neutral-500"] {
+  color: #a3a3a3 !important;
+}
+html[data-theme="dark"] [class~="text-neutral-400"] {
+  color: #a1a1aa !important;
+}
+html[data-theme="dark"] [class~="text-neutral-300"] {
+  color: #71717a !important;
+}
+
+html[data-theme="dark"] [class*="border-neutral-100"],
+html[data-theme="dark"] [class*="border-neutral-200"],
+html[data-theme="dark"] [class*="border-neutral-300"] {
+  border-color: #2d2d31 !important;
+}
+html[data-theme="dark"] [class*="shadow-neutral"] {
+  --tw-shadow-color: rgba(0, 0, 0, 0.35) !important;
+}
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea {
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #64646b !important;
+}
+
+/* Retain semantic feedback while avoiding bright cards in dark mode. */
+html[data-theme="dark"] [class*="bg-green-50"] {
+  background-color: rgba(22, 101, 52, 0.16) !important;
+}
+html[data-theme="dark"] [class*="border-green-100"],
+html[data-theme="dark"] [class*="border-green-200"] {
+  border-color: rgba(74, 222, 128, 0.2) !important;
+}
+html[data-theme="dark"] [class~="text-green-900"],
+html[data-theme="dark"] [class~="text-green-800"],
+html[data-theme="dark"] [class~="text-green-700"] {
+  color: #86efac !important;
+}
+html[data-theme="dark"] [class*="bg-amber-50"] {
+  background-color: rgba(146, 64, 14, 0.18) !important;
+}
+html[data-theme="dark"] [class*="border-amber-100"],
+html[data-theme="dark"] [class*="border-amber-200"] {
+  border-color: rgba(251, 191, 36, 0.2) !important;
+}
+html[data-theme="dark"] [class~="text-amber-900"],
+html[data-theme="dark"] [class~="text-amber-800"] {
+  color: #fcd34d !important;
+}
+html[data-theme="dark"] [class*="bg-violet-50"] {
+  background-color: rgba(91, 33, 182, 0.15) !important;
+}
+html[data-theme="dark"] [class*="border-violet"] {
+  border-color: rgba(167, 139, 250, 0.28) !important;
+}
+
+html[data-theme="dark"] .ios-lift:focus-within {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.24),
+    0 14px 36px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* ------------------------------------------------------------------ */
+/* Report scroll-reveal + section nav (Apple editorial feel)          */
+/* ------------------------------------------------------------------ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 720ms var(--spring),
+    transform 720ms var(--spring);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* smooth anchored scrolling for the section nav */
+html {
+  scroll-behavior: smooth;
+}
+
+html[data-theme="dark"] .section-nav-item .bg-neutral-900 {
+  background-color: #f5f5f5 !important;
+}
+
+/* Mode selection cards — staggered entrance */
+.mode-card {
+  animation: modeCardIn 620ms var(--spring-bubble) both;
+}
+.mode-card:nth-child(1) { animation-delay: 60ms; }
+.mode-card:nth-child(2) { animation-delay: 150ms; }
+@keyframes modeCardIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Smart stopping — subtle slide-in banners */
+.end-banner {
+  animation: bannerIn 620ms var(--spring-bubble) both;
+}
+@keyframes bannerIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); filter: blur(3px); }
+  to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
